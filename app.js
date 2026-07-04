@@ -105,20 +105,7 @@ function lightOrb() {
 function stateOrb(failed = false) {
   return `
     <div class="state-orb ${failed ? "state-orb-failed" : "state-orb-loading"}" aria-hidden="true">
-      <span class="state-orb-shadow"></span>
-      <span class="state-orb-ring ring-back"></span>
-      <span class="state-orb-sphere"></span>
-      <span class="state-orb-ring ring-front"></span>
-      <span class="state-orb-highlight"></span>
-      <span class="state-orb-eye eye-left"></span>
-      <span class="state-orb-eye eye-right"></span>
-      <span class="state-orb-spark"></span>
-      <span class="state-orb-frown"></span>
-      <span class="state-orb-crack crack-one"></span>
-      <span class="state-orb-crack crack-two"></span>
-      <span class="state-orb-swirl"></span>
-      <span class="state-orb-cloud cloud-left"></span>
-      <span class="state-orb-cloud cloud-right"></span>
+      <img src="${failed ? "assets/loading-failed.png" : "assets/loading.png"}" alt="" />
     </div>
   `;
 }
@@ -274,7 +261,7 @@ function sourcesPanel(open = false) {
     return `
       <div class="sources-panel fade-in">
         <button type="button" class="sources-collapsed" data-action="toggle-sources">
-          <span>已参考 12 篇资料</span><span class="chevron">⌄</span>
+          <span>已参考 12 篇资料</span><span class="chevron is-collapsed" aria-hidden="true"></span>
         </button>
       </div>
     `;
@@ -282,7 +269,7 @@ function sourcesPanel(open = false) {
   return `
     <div class="sources-panel fade-in">
       <button type="button" class="sources-expanded-head" data-action="toggle-sources">
-        <span>收起 12 篇资料</span><span class="chevron">⌃</span>
+        <span>收起 12 篇资料</span><span class="chevron" aria-hidden="true"></span>
       </button>
       <div class="sources-expanded">
         <ol class="sources-list">
@@ -468,11 +455,14 @@ function markdownShowcase() {
       </ol>
       <hr />
       <p>申报时填写 HS 编码 <span class="inline-code">8517.62.9900</span> 即可。</p>
-      <pre class="code-block">{
+      <div class="code-frame">
+        <button type="button" class="copy-button">复制</button>
+        <pre class="code-block">{
   "hs_code": "8517.62.9900",
   "market": "SG",
   "cert_required": ["IMDA-Import-Permit", "PSB-Safety-Mark-2026"]
 }</pre>
+      </div>
       ${marketTable()}
       <div class="blockquote">注意：超长 URL、英文与连续编码必须自动折行，不得撑破气泡。</div>
       <p>https://example.com/reports/very-long-market-policy-reference-path-that-should-wrap-safely-inside-the-mobile-container</p>
@@ -552,7 +542,7 @@ function scrollConversation(position = "bottom") {
 async function runQuestion(text) {
   state.screen = "generating";
   renderStreamingShell({ question: text });
-  await streamBlocks(answerShortBlocks(), { finalMode: "answer", delay: 220, charDelay: 26 });
+  await streamBlocks(answerShortBlocks(), { finalMode: "answer", delay: 165, charDelay: 20 });
   state.screen = "answer";
 }
 
@@ -564,7 +554,7 @@ async function runReportStream() {
     question: "帮我生成一份东南亚市场进入分析报告",
     input: "继续追问…",
   });
-  await streamBlocks(longReportBlocks(), { finalMode: "report", delay: 180, charDelay: 14 });
+  await streamBlocks(longReportBlocks(), { finalMode: "report", delay: 135, charDelay: 11 });
   state.screen = "report";
 }
 

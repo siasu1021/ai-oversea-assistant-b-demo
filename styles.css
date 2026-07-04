@@ -651,27 +651,36 @@ button {
   word-break: break-all;
 }
 
-.code-block {
+.code-frame {
   position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  background: var(--code-bg);
+  margin: 0 0 16px;
+}
+
+.code-block {
   overflow-x: auto;
   padding: 12px;
-  border-radius: 8px;
   background: var(--code-bg);
   font-family: var(--mono);
   font-size: 12px;
   line-height: 17px;
   white-space: pre;
-  margin: 0 0 16px;
+  margin: 0;
 }
 
-.code-block::after {
-  content: "复制";
+.copy-button {
   position: absolute;
   top: 8px;
   right: 12px;
+  z-index: 2;
+  padding: 0;
+  background: transparent;
   color: var(--muted);
   font-family: var(--font);
   font-size: 11px;
+  line-height: 17px;
 }
 
 .blockquote {
@@ -776,7 +785,7 @@ tbody tr:nth-child(even) {
 .sources-expanded-head {
   width: 100%;
   min-height: 37px;
-  padding: 9px 14px;
+  padding: 9px 15px 9px 14px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -806,8 +815,18 @@ tbody tr:nth-child(even) {
 }
 
 .chevron {
-  font-size: 15px;
-  line-height: 14px;
+  width: 8px;
+  height: 8px;
+  flex: 0 0 8px;
+  margin-right: 5px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(225deg);
+  transform-origin: 50% 50%;
+}
+
+.chevron.is-collapsed {
+  transform: rotate(45deg);
 }
 
 .follow-ups {
@@ -1047,188 +1066,17 @@ tbody tr:nth-child(even) {
 }
 
 .state-orb {
-  width: 132px;
-  height: 104px;
+  width: 120px;
+  height: 120px;
   position: relative;
   animation: orbFloat 4.8s ease-in-out infinite;
 }
 
-.state-orb > span {
-  position: absolute;
-}
-
-.state-orb-shadow {
-  width: 62px;
-  height: 14px;
-  left: 36px;
-  bottom: 11px;
-  border-radius: 50%;
-  background: rgba(34, 126, 218, 0.18);
-  filter: blur(6px);
-}
-
-.state-orb-sphere {
-  width: 74px;
-  height: 74px;
-  left: 29px;
-  top: 18px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 34% 27%, #a8efff 0 12%, #5bc7fb 36%, #268ee6 73%, #1672d5 100%);
-  box-shadow: inset -12px -14px 18px rgba(20, 103, 201, 0.18), 0 10px 18px rgba(35, 126, 218, 0.18);
-}
-
-.state-orb-highlight {
-  width: 25px;
-  height: 13px;
-  left: 42px;
-  top: 28px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.76);
-  filter: blur(1px);
-  transform: rotate(-23deg);
-}
-
-.state-orb-ring {
-  width: 98px;
-  height: 28px;
-  left: 17px;
-  top: 48px;
-  border: 5px solid rgba(122, 197, 250, 0.45);
-  border-radius: 50%;
-  transform: rotate(-12deg);
-}
-
-.ring-back {
-  clip-path: inset(0 0 50% 0);
-}
-
-.ring-front {
-  clip-path: inset(50% 0 0 0);
-  border-color: rgba(75, 169, 238, 0.62);
-}
-
-.state-orb-eye {
-  width: 8px;
-  height: 18px;
-  top: 49px;
-  border-radius: 8px;
-  background: #fff;
-  box-shadow: 0 1px 2px rgba(13, 77, 153, 0.26);
-}
-
-.state-orb-eye.eye-left {
-  left: 58px;
-}
-
-.state-orb-eye.eye-right {
-  left: 78px;
-}
-
-.state-orb-spark {
-  width: 16px;
-  height: 16px;
-  left: 91px;
-  top: 14px;
-  background: #31aee7;
-  clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%);
-  animation: sparklePulse 1.8s ease-in-out infinite;
-}
-
-.state-orb-frown,
-.state-orb-crack,
-.state-orb-swirl,
-.state-orb-cloud {
-  display: none;
-}
-
-.state-orb-failed .state-orb-ring,
-.state-orb-failed .state-orb-spark {
-  display: none;
-}
-
-.state-orb-failed .state-orb-sphere {
-  left: 30px;
-  top: 20px;
-  width: 76px;
-  height: 76px;
-}
-
-.state-orb-failed .state-orb-highlight {
-  left: 41px;
-  top: 29px;
-}
-
-.state-orb-failed .state-orb-eye.eye-left {
-  left: 58px;
-  top: 51px;
-}
-
-.state-orb-failed .state-orb-eye.eye-right {
-  left: 78px;
-  top: 51px;
-}
-
-.state-orb-failed .state-orb-frown {
+.state-orb img {
+  width: 100%;
+  height: 100%;
   display: block;
-  width: 22px;
-  height: 13px;
-  left: 57px;
-  top: 66px;
-  border: 5px solid #fff;
-  border-bottom: 0;
-  border-radius: 14px 14px 0 0;
-}
-
-.state-orb-failed .state-orb-crack {
-  display: block;
-  width: 16px;
-  height: 22px;
-  left: 88px;
-  top: 33px;
-  border-left: 2px solid #1b68d2;
-  border-bottom: 2px solid #1b68d2;
-  transform: skew(-14deg) rotate(-15deg);
-  opacity: 0.62;
-}
-
-.state-orb-failed .crack-two {
-  width: 11px;
-  height: 13px;
-  left: 96px;
-  top: 48px;
-  transform: skew(-10deg) rotate(18deg);
-}
-
-.state-orb-failed .state-orb-swirl {
-  display: block;
-  width: 24px;
-  height: 22px;
-  left: 24px;
-  top: 8px;
-  border: 3px solid #68b4ee;
-  border-right-color: transparent;
-  border-bottom-color: transparent;
-  border-radius: 50%;
-  transform: rotate(-18deg);
-}
-
-.state-orb-failed .state-orb-cloud {
-  display: block;
-  width: 24px;
-  height: 10px;
-  border-radius: 999px;
-  background: rgba(126, 197, 247, 0.2);
-  filter: blur(4px);
-}
-
-.state-orb-failed .cloud-left {
-  left: 13px;
-  top: 58px;
-}
-
-.state-orb-failed .cloud-right {
-  right: 11px;
-  top: 56px;
+  object-fit: contain;
 }
 
 .fade-in {
