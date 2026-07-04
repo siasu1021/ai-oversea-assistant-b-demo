@@ -323,7 +323,7 @@ function renderChat(mode = "answer") {
       ${bottomArea(inputConfig(mode, stateOnly))}
     </section>
   `;
-  scrollConversation(report ? "report" : "bottom");
+  scrollConversation(report || markdown || multiline ? "top" : "bottom");
 }
 
 function renderStreamingShell({ title = "欧美时尚市场趋势", question = "2026 年欧美时尚消费市场的核心趋势有哪些？", input = "这些趋势对中国品牌出海有什么启示？" } = {}) {
@@ -524,6 +524,10 @@ function scrollConversation(position = "bottom") {
   requestAnimationFrame(() => {
     const el = document.querySelector("#conversation");
     if (!el) return;
+    if (position === "top") {
+      el.scrollTop = 0;
+      return;
+    }
     if (position === "report") {
       const source = el.querySelector(".sources-panel");
       if (source) {
