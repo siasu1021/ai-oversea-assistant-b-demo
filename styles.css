@@ -283,19 +283,11 @@ button {
 }
 
 .light-orb {
-  width: 104px;
-  height: 104px;
-  display: block;
-  object-fit: contain;
-  margin: -6px 0 -6px -6px;
+  width: 92px;
+  height: 92px;
+  position: relative;
+  margin: 0;
   animation: orbFloat 4.8s ease-in-out infinite;
-}
-
-.light-orb.gif {
-  width: 96px;
-  height: 96px;
-  object-fit: contain;
-  display: block;
 }
 
 .orb-glow,
@@ -350,30 +342,32 @@ button {
 }
 
 .orb-eye-wink {
-  width: 10px;
-  height: 10px;
+  width: 12px;
+  height: 12px;
   left: 50px;
-  top: 39px;
+  top: 38px;
 }
 
 .orb-eye-wink::before,
 .orb-eye-wink::after {
   content: "";
   position: absolute;
-  width: 7px;
-  height: 2px;
+  width: 8px;
+  height: 3px;
   background: #fff;
   border-radius: 3px;
-  top: 4px;
   left: 1px;
+  transform-origin: 1px 50%;
 }
 
 .orb-eye-wink::before {
-  transform: rotate(42deg);
+  top: 3px;
+  transform: rotate(-34deg);
 }
 
 .orb-eye-wink::after {
-  transform: rotate(-42deg);
+  top: 8px;
+  transform: rotate(34deg);
 }
 
 .orb-spark,
@@ -555,6 +549,7 @@ button {
 }
 
 .answer {
+  flex: 0 0 auto;
   padding-top: 4px;
   color: var(--text);
   font-size: 14px;
@@ -709,15 +704,19 @@ button {
   line-height: 21px;
 }
 
-.table-scroll {
+.table-frame {
   position: relative;
-  overflow-x: auto;
+  overflow: hidden;
   margin-bottom: 16px;
   border-radius: 10px;
 }
 
-.table-scroll::after {
-  content: "";
+.table-scroll {
+  overflow-x: auto;
+  border-radius: 10px;
+}
+
+.table-fade {
   position: absolute;
   top: 0;
   right: 0;
@@ -784,6 +783,7 @@ tbody tr:nth-child(even) {
 }
 
 .sources-panel {
+  flex: 0 0 auto;
   width: 100%;
   border-radius: 14px;
   background: var(--sources-bg);
@@ -830,6 +830,7 @@ tbody tr:nth-child(even) {
 }
 
 .follow-ups {
+  flex: 0 0 auto;
   gap: 8px;
 }
 
@@ -865,6 +866,7 @@ tbody tr:nth-child(even) {
 }
 
 .state-block {
+  flex: 0 0 auto;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -1061,14 +1063,17 @@ tbody tr:nth-child(even) {
 
 .loading-orb,
 .failed-orb {
-  width: 120px;
-  height: 120px;
-  object-fit: cover;
-  object-position: 0 50%;
+  width: 128px;
+  height: 104px;
+  background-image: url("./光球_加载状态_loading-memo.png");
+  background-repeat: no-repeat;
+  background-size: 360px 203px;
+  background-position: -40px -49px;
+  filter: drop-shadow(0 9px 14px rgba(28, 126, 214, 0.12));
 }
 
 .failed-orb {
-  object-position: 100% 50%;
+  background-position: -187px -47px;
 }
 
 .fade-in {

@@ -1,10 +1,5 @@
 const app = document.querySelector("#app");
 
-const IMAGES = {
-  wink: "./IP光球_眨眼.gif",
-  loadingMemo: "./光球_加载状态_loading-memo.png",
-};
-
 const sources = [
   "WWD - 2026 Fashion Trends to Watch",
   "Business of Fashion - The State of Fashion 2026",
@@ -94,7 +89,21 @@ function homeIndicatorOnly() {
 }
 
 function lightOrb() {
-  return `<img class="light-orb" src="${IMAGES.wink}" alt="" aria-hidden="true" />`;
+  return `
+    <div class="light-orb" aria-hidden="true">
+      <span class="orb-glow"></span>
+      <span class="orb-sphere"></span>
+      <span class="orb-highlight"></span>
+      <span class="orb-eye-left"></span>
+      <span class="orb-eye-wink"></span>
+      <span class="orb-spark"></span>
+      <span class="orb-spark-sm"></span>
+    </div>
+  `;
+}
+
+function stateOrb(failed = false) {
+  return `<div class="${failed ? "failed-orb" : "loading-orb"}" aria-hidden="true"></div>`;
 }
 
 function loadingDots() {
@@ -132,7 +141,7 @@ function renderLoading(failed = false) {
     <section class="screen">
       ${statusBar()}
       <main class="init-state">
-        <img class="${failed ? "failed-orb" : "loading-orb"}" src="${IMAGES.loadingMemo}" alt="" />
+        ${stateOrb(failed)}
         ${failed ? `<p>页面加载失败，请检查网络后重试</p><button type="button" class="primary-button" data-action="reload">重新加载</button>` : `${loadingDots()}<p>正在加载 AI 出海助手...</p>`}
       </main>
       ${homeIndicatorOnly()}
@@ -310,7 +319,7 @@ function renderChat(mode = "answer") {
       ${bottomArea(inputConfig(mode, stateOnly))}
     </section>
   `;
-  scrollConversation();
+  scrollConversation(report ? "report" : "bottom");
 }
 
 function renderStreamingShell({ title = "欧美时尚市场趋势", question = "2026 年欧美时尚消费市场的核心趋势有哪些？", input = "这些趋势对中国品牌出海有什么启示？" } = {}) {
@@ -331,7 +340,7 @@ function renderStreamingShell({ title = "欧美时尚市场趋势", question = "
   scrollConversation();
 }
 
-async function streamBlocks(blocks, { finalMode = "answer", delay = 360 } = {}) {
+async function streamBlocks(blocks, { finalMode = "answer", delay = 240, charDelay = 18 } = {}) {
   const streamId = ++state.streamId;
   const host = document.querySelector("#stream-host");
   const typing = document.querySelector(".typing-indicator");
@@ -342,8 +351,17 @@ async function streamBlocks(blocks, { finalMode = "answer", delay = 360 } = {}) 
     await wait(delay);
     const wrapper = document.createElement("div");
     wrapper.className = "stream-chunk answer fade-in";
-    wrapper.innerHTML = block;
     host.appendChild(wrapper);
+
+    if (block.includes("sources-panel")) {
+      wrapper.innerHTML = block;
+      scrollConversation();
+      continue;
+    }
+
+    await typeHtmlBlock(wrapper, block, { streamId, charDelay });
+    if (streamId !== state.streamId) return;
+    wrapper.innerHTML = block;
     scrollConversation();
   }
 
@@ -351,6 +369,21 @@ async function streamBlocks(blocks, { finalMode = "answer", delay = 360 } = {}) 
   if (typing) typing.remove();
   await wait(120);
   renderChat(finalMode);
+}
+
+async function typeHtmlBlock(target, html, { streamId, charDelay }) {
+  const probe = document.createElement("div");
+  probe.innerHTML = html;
+  const text = (probe.textContent || "").replace(/\s+/g, " ").trim();
+  target.classList.add("typing-text");
+  target.textContent = "";
+
+  for (let index = 0; index < text.length; index += 1) {
+    if (streamId !== state.streamId) return;
+    target.textContent += text[index];
+    if (index % 10 === 0) scrollConversation();
+    await wait(charDelay);
+  }
 }
 
 function inputConfig(mode) {
@@ -429,17 +462,20 @@ function markdownShowcase() {
 
 function marketTable() {
   return `
-    <div class="table-scroll">
-      <table>
-        <thead>
-          <tr><th>市场</th><th>平台重点</th><th>物流基建</th><th>平均时效</th><th>进入成本</th></tr>
-        </thead>
-        <tbody>
-          <tr><td>新加坡</td><td>Shopee / Lazada</td><td>成熟</td><td>1-2 天</td><td>高 · 合规样板</td></tr>
-          <tr><td>印尼</td><td>TikTok Shop</td><td>区域差异大</td><td>3-7 天</td><td>中 · 增长优先</td></tr>
-          <tr><td>越南</td><td>Shopee / 本地渠道</td><td>改善中</td><td>2-5 天</td><td>中 · 稳步进入</td></tr>
-        </tbody>
-      </table>
+    <div class="table-frame">
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr><th>市场</th><th>平台重点</th><th>物流基建</th><th>平均时效</th><th>进入成本</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>新加坡</td><td>Shopee / Lazada</td><td>成熟</td><td>1-2 天</td><td>高 · 合规样板</td></tr>
+            <tr><td>印尼</td><td>TikTok Shop</td><td>区域差异大</td><td>3-7 天</td><td>中 · 增长优先</td></tr>
+            <tr><td>越南</td><td>Shopee / 本地渠道</td><td>改善中</td><td>2-5 天</td><td>中 · 稳步进入</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="table-fade" aria-hidden="true"></div>
     </div>
   `;
 }
@@ -474,17 +510,29 @@ function stoppedAnswer() {
   `;
 }
 
-function scrollConversation() {
+function scrollConversation(position = "bottom") {
   requestAnimationFrame(() => {
     const el = document.querySelector("#conversation");
-    if (el) el.scrollTop = el.scrollHeight;
+    if (!el) return;
+    if (position === "report") {
+      const source = el.querySelector(".sources-panel");
+      if (source) {
+        const sourceTop = source.getBoundingClientRect().top;
+        const containerTop = el.getBoundingClientRect().top;
+        el.scrollTop = Math.max(0, el.scrollTop + sourceTop - containerTop - 12);
+      } else {
+        el.scrollTop = 0;
+      }
+      return;
+    }
+    el.scrollTop = el.scrollHeight;
   });
 }
 
 async function runQuestion(text) {
   state.screen = "generating";
   renderStreamingShell({ question: text });
-  await streamBlocks(answerShortBlocks(), { finalMode: "answer", delay: 430 });
+  await streamBlocks(answerShortBlocks(), { finalMode: "answer", delay: 220, charDelay: 26 });
   state.screen = "answer";
 }
 
@@ -496,7 +544,7 @@ async function runReportStream() {
     question: "帮我生成一份东南亚市场进入分析报告",
     input: "继续追问…",
   });
-  await streamBlocks(longReportBlocks(), { finalMode: "report", delay: 380 });
+  await streamBlocks(longReportBlocks(), { finalMode: "report", delay: 180, charDelay: 14 });
   state.screen = "report";
 }
 
@@ -543,8 +591,9 @@ function bindEvents() {
       if (target === "markdown") renderChat("markdown");
       if (target === "loading") {
         renderLoading(false);
-        await wait(1000);
-        renderHome();
+      }
+      if (target === "load-failed") {
+        renderLoading(true);
       }
       return;
     }
