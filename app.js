@@ -103,7 +103,24 @@ function lightOrb() {
 }
 
 function stateOrb(failed = false) {
-  return `<div class="${failed ? "failed-orb" : "loading-orb"}" aria-hidden="true"></div>`;
+  return `
+    <div class="state-orb ${failed ? "state-orb-failed" : "state-orb-loading"}" aria-hidden="true">
+      <span class="state-orb-shadow"></span>
+      <span class="state-orb-ring ring-back"></span>
+      <span class="state-orb-sphere"></span>
+      <span class="state-orb-ring ring-front"></span>
+      <span class="state-orb-highlight"></span>
+      <span class="state-orb-eye eye-left"></span>
+      <span class="state-orb-eye eye-right"></span>
+      <span class="state-orb-spark"></span>
+      <span class="state-orb-frown"></span>
+      <span class="state-orb-crack crack-one"></span>
+      <span class="state-orb-crack crack-two"></span>
+      <span class="state-orb-swirl"></span>
+      <span class="state-orb-cloud cloud-left"></span>
+      <span class="state-orb-cloud cloud-right"></span>
+    </div>
+  `;
 }
 
 function loadingDots() {
@@ -334,7 +351,7 @@ function renderStreamingShell({ title = "欧美时尚市场趋势", question = "
         <div id="stream-host"></div>
         ${typingIndicator()}
       </main>
-      ${bottomArea({ value: input, active: true, stop: true })}
+      ${bottomArea({ placeholder: input, active: true, stop: true })}
     </section>
   `;
   scrollConversation();
@@ -388,7 +405,10 @@ async function typeHtmlBlock(target, html, { streamId, charDelay }) {
 
 function inputConfig(mode) {
   if (mode === "generating") {
-    return { value: "这些趋势对中国品牌出海有什么启示？", active: true, stop: true };
+    return { placeholder: "继续追问…", active: true, stop: true };
+  }
+  if (mode === "report") {
+    return { placeholder: "继续追问…", active: true };
   }
   if (mode === "multiline") {
     return {
@@ -559,7 +579,7 @@ function renderGenerating(text = "2026 年欧美时尚消费市场的核心趋�
         ${searchStatus()}
         ${typingIndicator()}
       </main>
-      ${bottomArea({ value: "这些趋势对中国品牌出海有什么启示？", active: true, stop: true })}
+      ${bottomArea({ placeholder: "继续追问…", active: true, stop: true })}
     </section>
   `;
   scrollConversation();

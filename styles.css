@@ -283,8 +283,8 @@ button {
 }
 
 .light-orb {
-  width: 92px;
-  height: 92px;
+  width: 122px;
+  height: 122px;
   position: relative;
   margin: 0;
   animation: orbFloat 4.8s ease-in-out infinite;
@@ -301,30 +301,30 @@ button {
 }
 
 .orb-glow {
-  width: 81px;
-  height: 81px;
-  left: 6px;
-  top: 7px;
+  width: 108px;
+  height: 108px;
+  left: 8px;
+  top: 9px;
   border-radius: 50%;
   background: radial-gradient(circle, rgba(84, 190, 255, 0.74) 0%, rgba(84, 190, 255, 0.2) 52%, rgba(84, 190, 255, 0) 76%);
-  filter: blur(7px);
+  filter: blur(9px);
 }
 
 .orb-sphere {
-  width: 66px;
-  height: 66px;
-  left: 13px;
-  top: 13px;
+  width: 88px;
+  height: 88px;
+  left: 17px;
+  top: 17px;
   border-radius: 50%;
   background: radial-gradient(circle at 36% 32%, #8be4ff 0 15%, #48b9f4 38%, #258ee8 70%, #166ed1 100%);
-  box-shadow: 0 8px 18px rgba(28, 126, 214, 0.24);
+  box-shadow: 0 10px 24px rgba(28, 126, 214, 0.24);
 }
 
 .orb-highlight {
-  width: 23px;
-  height: 13px;
-  left: 24px;
-  top: 19px;
+  width: 31px;
+  height: 17px;
+  left: 32px;
+  top: 25px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.76);
   transform: rotate(-24deg);
@@ -332,42 +332,42 @@ button {
 }
 
 .orb-eye-left {
-  width: 6px;
-  height: 13px;
-  left: 35px;
-  top: 37px;
+  width: 9px;
+  height: 18px;
+  left: 47px;
+  top: 49px;
   background: #fff;
-  border-radius: 4px;
+  border-radius: 8px;
   box-shadow: 0 1px 2px rgba(13, 77, 153, 0.3);
 }
 
 .orb-eye-wink {
-  width: 12px;
-  height: 12px;
-  left: 50px;
-  top: 38px;
+  width: 26px;
+  height: 26px;
+  left: 66px;
+  top: 47px;
 }
 
 .orb-eye-wink::before,
 .orb-eye-wink::after {
   content: "";
   position: absolute;
-  width: 8px;
-  height: 3px;
+  width: 9px;
+  height: 18px;
   background: #fff;
-  border-radius: 3px;
-  left: 1px;
-  transform-origin: 1px 50%;
+  border-radius: 8px;
+  left: 8px;
+  top: 4px;
+  box-shadow: 0 1px 2px rgba(13, 77, 153, 0.3);
+  transform-origin: 1.5px 50%;
 }
 
 .orb-eye-wink::before {
-  top: 3px;
-  transform: rotate(-34deg);
+  animation: winkTop 1400ms cubic-bezier(0.16, 1, 0.3, 1) 360ms both;
 }
 
 .orb-eye-wink::after {
-  top: 8px;
-  transform: rotate(34deg);
+  animation: winkBottom 1400ms cubic-bezier(0.16, 1, 0.3, 1) 360ms both;
 }
 
 .orb-spark,
@@ -378,17 +378,17 @@ button {
 }
 
 .orb-spark {
-  width: 16px;
-  height: 16px;
-  left: 69px;
-  top: 9px;
+  width: 22px;
+  height: 22px;
+  left: 92px;
+  top: 12px;
 }
 
 .orb-spark-sm {
-  width: 9px;
-  height: 9px;
-  left: 7px;
-  top: 63px;
+  width: 12px;
+  height: 12px;
+  left: 9px;
+  top: 84px;
   animation-delay: 0.45s;
 }
 
@@ -949,6 +949,10 @@ tbody tr:nth-child(even) {
   color: var(--muted);
 }
 
+.input-text:placeholder-shown {
+  color: var(--muted);
+}
+
 .counter {
   position: absolute;
   right: 50px;
@@ -1061,19 +1065,189 @@ tbody tr:nth-child(even) {
   background: var(--brand-pressed);
 }
 
-.loading-orb,
-.failed-orb {
-  width: 128px;
+.state-orb {
+  width: 132px;
   height: 104px;
-  background-image: url("./光球_加载状态_loading-memo.png");
-  background-repeat: no-repeat;
-  background-size: 360px 203px;
-  background-position: -40px -49px;
-  filter: drop-shadow(0 9px 14px rgba(28, 126, 214, 0.12));
+  position: relative;
+  animation: orbFloat 4.8s ease-in-out infinite;
 }
 
-.failed-orb {
-  background-position: -187px -47px;
+.state-orb > span {
+  position: absolute;
+}
+
+.state-orb-shadow {
+  width: 62px;
+  height: 14px;
+  left: 36px;
+  bottom: 11px;
+  border-radius: 50%;
+  background: rgba(34, 126, 218, 0.18);
+  filter: blur(6px);
+}
+
+.state-orb-sphere {
+  width: 74px;
+  height: 74px;
+  left: 29px;
+  top: 18px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 34% 27%, #a8efff 0 12%, #5bc7fb 36%, #268ee6 73%, #1672d5 100%);
+  box-shadow: inset -12px -14px 18px rgba(20, 103, 201, 0.18), 0 10px 18px rgba(35, 126, 218, 0.18);
+}
+
+.state-orb-highlight {
+  width: 25px;
+  height: 13px;
+  left: 42px;
+  top: 28px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.76);
+  filter: blur(1px);
+  transform: rotate(-23deg);
+}
+
+.state-orb-ring {
+  width: 98px;
+  height: 28px;
+  left: 17px;
+  top: 48px;
+  border: 5px solid rgba(122, 197, 250, 0.45);
+  border-radius: 50%;
+  transform: rotate(-12deg);
+}
+
+.ring-back {
+  clip-path: inset(0 0 50% 0);
+}
+
+.ring-front {
+  clip-path: inset(50% 0 0 0);
+  border-color: rgba(75, 169, 238, 0.62);
+}
+
+.state-orb-eye {
+  width: 8px;
+  height: 18px;
+  top: 49px;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(13, 77, 153, 0.26);
+}
+
+.state-orb-eye.eye-left {
+  left: 58px;
+}
+
+.state-orb-eye.eye-right {
+  left: 78px;
+}
+
+.state-orb-spark {
+  width: 16px;
+  height: 16px;
+  left: 91px;
+  top: 14px;
+  background: #31aee7;
+  clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%);
+  animation: sparklePulse 1.8s ease-in-out infinite;
+}
+
+.state-orb-frown,
+.state-orb-crack,
+.state-orb-swirl,
+.state-orb-cloud {
+  display: none;
+}
+
+.state-orb-failed .state-orb-ring,
+.state-orb-failed .state-orb-spark {
+  display: none;
+}
+
+.state-orb-failed .state-orb-sphere {
+  left: 30px;
+  top: 20px;
+  width: 76px;
+  height: 76px;
+}
+
+.state-orb-failed .state-orb-highlight {
+  left: 41px;
+  top: 29px;
+}
+
+.state-orb-failed .state-orb-eye.eye-left {
+  left: 59px;
+  top: 51px;
+}
+
+.state-orb-failed .state-orb-eye.eye-right {
+  left: 80px;
+  top: 51px;
+}
+
+.state-orb-failed .state-orb-frown {
+  display: block;
+  width: 22px;
+  height: 13px;
+  left: 57px;
+  top: 66px;
+  border: 5px solid #fff;
+  border-bottom: 0;
+  border-radius: 14px 14px 0 0;
+}
+
+.state-orb-failed .state-orb-crack {
+  display: block;
+  width: 25px;
+  height: 30px;
+  left: 84px;
+  top: 28px;
+  border-left: 3px solid #1b68d2;
+  border-bottom: 3px solid #1b68d2;
+  transform: skew(-18deg) rotate(-18deg);
+  opacity: 0.72;
+}
+
+.state-orb-failed .crack-two {
+  width: 18px;
+  height: 19px;
+  left: 94px;
+  top: 47px;
+  transform: skew(-12deg) rotate(20deg);
+}
+
+.state-orb-failed .state-orb-swirl {
+  display: block;
+  width: 24px;
+  height: 22px;
+  left: 24px;
+  top: 8px;
+  border: 3px solid #68b4ee;
+  border-right-color: transparent;
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  transform: rotate(-18deg);
+}
+
+.state-orb-failed .state-orb-cloud {
+  display: block;
+  width: 30px;
+  height: 12px;
+  border-radius: 999px;
+  background: rgba(126, 197, 247, 0.34);
+  filter: blur(3px);
+}
+
+.state-orb-failed .cloud-left {
+  left: 8px;
+  top: 56px;
+}
+
+.state-orb-failed .cloud-right {
+  right: 2px;
+  top: 53px;
 }
 
 .fade-in {
@@ -1129,6 +1303,46 @@ tbody tr:nth-child(even) {
   50% {
     opacity: 1;
     transform: scale(1.08);
+  }
+}
+
+@keyframes winkTop {
+  0%,
+  24% {
+    width: 9px;
+    height: 18px;
+    left: 8px;
+    top: 4px;
+    border-radius: 8px;
+    transform: rotate(0deg);
+  }
+  100% {
+    width: 18px;
+    height: 7px;
+    left: 2px;
+    top: 7px;
+    border-radius: 7px;
+    transform: rotate(-43deg);
+  }
+}
+
+@keyframes winkBottom {
+  0%,
+  24% {
+    width: 9px;
+    height: 18px;
+    left: 8px;
+    top: 4px;
+    border-radius: 8px;
+    transform: rotate(0deg);
+  }
+  100% {
+    width: 18px;
+    height: 7px;
+    left: 2px;
+    top: 13px;
+    border-radius: 7px;
+    transform: rotate(43deg);
   }
 }
 
