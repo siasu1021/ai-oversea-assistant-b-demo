@@ -376,18 +376,45 @@ async function streamBlocks(blocks, { finalMode = "answer", delay = 240, charDel
 }
 
 async function typeHtmlBlock(target, html, { streamId, charDelay }) {
-  const probe = document.createElement("div");
-  probe.innerHTML = html;
-  const text = (probe.textContent || "").replace(/\s+/g, " ").trim();
+  const { parts } = hydrateStreamingHtml(target, html);
   target.classList.add("typing-text");
-  target.textContent = "";
 
-  for (let index = 0; index < text.length; index += 1) {
-    if (streamId !== state.streamId) return;
-    target.textContent += text[index];
-    if (index % 10 === 0) scrollConversation();
-    await wait(charDelay);
+  for (const part of parts) {
+    for (let index = 0; index < part.text.length; index += 1) {
+      if (streamId !== state.streamId) return;
+      part.node.textContent += part.text[index];
+      if (index % 10 === 0) scrollConversation();
+      await wait(charDelay);
+    }
   }
+}
+
+function hydrateStreamingHtml(target, html) {
+  const template = document.createElement("template");
+  template.innerHTML = html.trim();
+  const parts = [];
+
+  function appendStreamingNode(sourceNode, parent, inPre = false) {
+    if (sourceNode.nodeType === Node.TEXT_NODE) {
+      const original = sourceNode.nodeValue || "";
+      const text = inPre ? original : original.replace(/\s+/g, " ");
+      if (!text.trim()) return;
+      const placeholder = document.createTextNode("");
+      parent.appendChild(placeholder);
+      parts.push({ node: placeholder, text });
+      return;
+    }
+
+    if (sourceNode.nodeType !== Node.ELEMENT_NODE) return;
+    const clone = sourceNode.cloneNode(false);
+    parent.appendChild(clone);
+    const childInPre = inPre || sourceNode.matches("pre, code, .code-block");
+    sourceNode.childNodes.forEach((child) => appendStreamingNode(child, clone, childInPre));
+  }
+
+  target.innerHTML = "";
+  template.content.childNodes.forEach((child) => appendStreamingNode(child, target));
+  return { parts };
 }
 
 function inputConfig(mode) {
