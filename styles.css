@@ -342,32 +342,13 @@ button {
 }
 
 .orb-eye-wink {
-  width: 26px;
-  height: 26px;
-  left: 66px;
-  top: 47px;
-}
-
-.orb-eye-wink::before,
-.orb-eye-wink::after {
-  content: "";
-  position: absolute;
   width: 9px;
   height: 18px;
+  left: 72px;
+  top: 49px;
   background: #fff;
   border-radius: 8px;
-  left: 8px;
-  top: 4px;
   box-shadow: 0 1px 2px rgba(13, 77, 153, 0.3);
-  transform-origin: 1.5px 50%;
-}
-
-.orb-eye-wink::before {
-  animation: winkTop 1400ms cubic-bezier(0.16, 1, 0.3, 1) 360ms both;
-}
-
-.orb-eye-wink::after {
-  animation: winkBottom 1400ms cubic-bezier(0.16, 1, 0.3, 1) 360ms both;
 }
 
 .orb-spark,
@@ -1178,12 +1159,12 @@ tbody tr:nth-child(even) {
 }
 
 .state-orb-failed .state-orb-eye.eye-left {
-  left: 59px;
+  left: 58px;
   top: 51px;
 }
 
 .state-orb-failed .state-orb-eye.eye-right {
-  left: 80px;
+  left: 78px;
   top: 51px;
 }
 
@@ -1200,22 +1181,22 @@ tbody tr:nth-child(even) {
 
 .state-orb-failed .state-orb-crack {
   display: block;
-  width: 25px;
-  height: 30px;
-  left: 84px;
-  top: 28px;
-  border-left: 3px solid #1b68d2;
-  border-bottom: 3px solid #1b68d2;
-  transform: skew(-18deg) rotate(-18deg);
-  opacity: 0.72;
+  width: 16px;
+  height: 22px;
+  left: 88px;
+  top: 33px;
+  border-left: 2px solid #1b68d2;
+  border-bottom: 2px solid #1b68d2;
+  transform: skew(-14deg) rotate(-15deg);
+  opacity: 0.62;
 }
 
 .state-orb-failed .crack-two {
-  width: 18px;
-  height: 19px;
-  left: 94px;
-  top: 47px;
-  transform: skew(-12deg) rotate(20deg);
+  width: 11px;
+  height: 13px;
+  left: 96px;
+  top: 48px;
+  transform: skew(-10deg) rotate(18deg);
 }
 
 .state-orb-failed .state-orb-swirl {
@@ -1233,21 +1214,21 @@ tbody tr:nth-child(even) {
 
 .state-orb-failed .state-orb-cloud {
   display: block;
-  width: 30px;
-  height: 12px;
+  width: 24px;
+  height: 10px;
   border-radius: 999px;
-  background: rgba(126, 197, 247, 0.34);
-  filter: blur(3px);
+  background: rgba(126, 197, 247, 0.2);
+  filter: blur(4px);
 }
 
 .state-orb-failed .cloud-left {
-  left: 8px;
-  top: 56px;
+  left: 13px;
+  top: 58px;
 }
 
 .state-orb-failed .cloud-right {
-  right: 2px;
-  top: 53px;
+  right: 11px;
+  top: 56px;
 }
 
 .fade-in {
@@ -1303,46 +1284,6 @@ tbody tr:nth-child(even) {
   50% {
     opacity: 1;
     transform: scale(1.08);
-  }
-}
-
-@keyframes winkTop {
-  0%,
-  24% {
-    width: 9px;
-    height: 18px;
-    left: 8px;
-    top: 4px;
-    border-radius: 8px;
-    transform: rotate(0deg);
-  }
-  100% {
-    width: 18px;
-    height: 7px;
-    left: 2px;
-    top: 7px;
-    border-radius: 7px;
-    transform: rotate(-43deg);
-  }
-}
-
-@keyframes winkBottom {
-  0%,
-  24% {
-    width: 9px;
-    height: 18px;
-    left: 8px;
-    top: 4px;
-    border-radius: 8px;
-    transform: rotate(0deg);
-  }
-  100% {
-    width: 18px;
-    height: 7px;
-    left: 2px;
-    top: 13px;
-    border-radius: 7px;
-    transform: rotate(43deg);
   }
 }
 
