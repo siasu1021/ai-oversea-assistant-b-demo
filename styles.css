@@ -283,9 +283,11 @@ button {
 }
 
 .light-orb {
-  width: 92px;
-  height: 92px;
-  position: relative;
+  width: 104px;
+  height: 104px;
+  display: block;
+  object-fit: contain;
+  margin: -6px 0 -6px -6px;
   animation: orbFloat 4.8s ease-in-out infinite;
 }
 
@@ -985,34 +987,14 @@ tbody tr:nth-child(even) {
   background: #fff;
 }
 
-.send-arrow {
-  width: 14px;
-  height: 14px;
-  position: relative;
-}
-
-.send-arrow::before {
-  content: "";
-  position: absolute;
-  width: 3px;
-  height: 14px;
-  left: 5.5px;
-  top: 0;
-  background: #fff;
-  border-radius: 3px;
-}
-
-.send-arrow::after {
-  content: "";
-  position: absolute;
-  width: 9px;
-  height: 9px;
-  left: 2.5px;
-  top: 0;
-  border-left: 3px solid #fff;
-  border-top: 3px solid #fff;
-  transform: rotate(45deg);
-  border-radius: 2px 0 0 0;
+.send-icon {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .disclaimer {

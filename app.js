@@ -26,6 +26,7 @@ const state = {
   input: "",
   inputMode: "single",
   generated: false,
+  streamId: 0,
 };
 
 const wait = (ms) => new Promise((resolve) => window.setTimeout(resolve, ms));
@@ -69,7 +70,7 @@ function bottomArea({ value = "", placeholder = "继续追问…", active = fals
           <textarea class="input-text" rows="${multiline ? 6 : 1}" maxlength="500" placeholder="${placeholder}">${escapeHtml(text)}</textarea>
           ${counter ? `<span class="counter">500/500</span>` : ""}
           <button type="button" class="send-button ${disabled ? "disabled" : ""} ${stop ? "stop" : ""}" data-action="${stop ? "stop" : "send"}" aria-label="${stop ? "停止生成" : "发送"}">
-            ${stop ? "" : `<span class="send-arrow"></span>`}
+            ${stop ? "" : sendIcon()}
           </button>
         </div>
       </div>
@@ -79,22 +80,21 @@ function bottomArea({ value = "", placeholder = "继续追问…", active = fals
   `;
 }
 
+function sendIcon() {
+  return `
+    <svg class="send-icon" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 19V5"></path>
+      <path d="M5 12l7-7 7 7"></path>
+    </svg>
+  `;
+}
+
 function homeIndicatorOnly() {
   return `<div class="home-indicator"></div>`;
 }
 
 function lightOrb() {
-  return `
-    <div class="light-orb" aria-hidden="true">
-      <span class="orb-glow"></span>
-      <span class="orb-sphere"></span>
-      <span class="orb-highlight"></span>
-      <span class="orb-eye-left"></span>
-      <span class="orb-eye-wink"></span>
-      <span class="orb-spark"></span>
-      <span class="orb-spark-sm"></span>
-    </div>
-  `;
+  return `<img class="light-orb" src="${IMAGES.wink}" alt="" aria-hidden="true" />`;
 }
 
 function loadingDots() {
@@ -185,6 +185,53 @@ function answerShort() {
   `;
 }
 
+function answerShortBlocks() {
+  return [
+    `<p>2026 年欧美时尚消费市场呈现以下三个核心趋势：</p>`,
+    `<section class="section">
+        <h3 class="section-title">1. 可持续时尚持续升温</h3>
+        <p>消费者对环保与可持续的关注度不断提高，品牌更加注重使用环保材料、减少碳排放，供应链透明度成为核心竞争力。</p>
+      </section>`,
+    `<section class="section">
+        <h3 class="section-title">2. AI 深度融入设计与营销</h3>
+        <p>AI 技术深度融入时尚产业，从趋势预测、智能设计到个性化推荐，全面提升品牌运营与购物体验。</p>
+      </section>`,
+    `<section class="section">
+        <h3 class="section-title">3. 个性化与小众品牌崛起</h3>
+        <p>消费者更追求独特的表达方式，小众品牌、限量款与定制化产品受到更多关注。</p>
+      </section>`,
+    `<div class="answer-divider"></div>${sourceTags()}`,
+  ];
+}
+
+function longReportBlocks() {
+  return [
+    sourcesPanel(false),
+    `<h1>东南亚市场进入分析报告</h1>
+      <p>综合政策、平台生态与物流基建来看，2026 年东南亚仍是中国品牌出海的重要增量市场，但进入策略需要从“铺渠道”转向“本地化经营”。</p>
+    `,
+    `<h2>一、结论摘要</h2>
+      <p>建议采用“新加坡做合规样板、印尼做规模增长、越南做成本效率”的三阶段进入策略。短期优先选择内容转化快、履约复杂度可控的美妆个护、时尚配饰与轻智能硬件。</p>`,
+    `<h2>二、优先机会</h2>
+      <ul>
+        <li><strong>美妆个护：</strong>内容种草效率高，达人合作与短视频平台能快速验证需求，但需关注成分备案、清真认证与广告合规。</li>
+        <li><strong>时尚配饰：</strong>价格带弹性较大，适合通过 TikTok Shop 与 Shopee 做快速测试，重点控制退换货与尺码体验。</li>
+        <li><strong>智能小家电：</strong>客单价较高，适合建立品牌心智，但需提前准备安全认证、售后网点与本地仓配。</li>
+      </ul>`,
+    `<h2>三、市场对比</h2>${marketTable()}`,
+    `<h2>四、进入路径</h2>
+      <ol>
+        <li>第 1 阶段：用新加坡沉淀英文内容、政策合规清单与客服 SOP。</li>
+        <li>第 2 阶段：在印尼验证达人投放、直播转化、本地支付与仓配模型。</li>
+        <li>第 3 阶段：复制到越南，重点优化物流时效、售后成本和平台促销节奏。</li>
+      </ol>`,
+    `<div class="blockquote">注意：以上政策要点以当地官方最新公告为准，实施细则可能按季度调整，申报前请再次核对生效日期。</div>`,
+    `<h2>五、预算与团队建议</h2>
+      <p>冷启动预算建议集中在样品测款、达人内容、平台广告与客服履约。团队配置可先采用“国内品牌负责人 + 本地运营顾问 + 第三方仓配客服”的轻量结构，待单量稳定后再补本地全职岗位。</p>
+      <div class="answer-divider"></div>${sourceTags()}`,
+  ];
+}
+
 function sourceTags() {
   return `
     <div class="source-tags">
@@ -266,6 +313,46 @@ function renderChat(mode = "answer") {
   scrollConversation();
 }
 
+function renderStreamingShell({ title = "欧美时尚市场趋势", question = "2026 年欧美时尚消费市场的核心趋势有哪些？", input = "这些趋势对中国品牌出海有什么启示？" } = {}) {
+  app.innerHTML = `
+    <section class="screen">
+      ${statusBar()}
+      ${chatHeader(title)}
+      <main class="conversation" id="conversation">
+        <div class="timestamp">14:30</div>
+        ${userMessage(question)}
+        ${searchStatus()}
+        <div id="stream-host"></div>
+        ${typingIndicator()}
+      </main>
+      ${bottomArea({ value: input, active: true, stop: true })}
+    </section>
+  `;
+  scrollConversation();
+}
+
+async function streamBlocks(blocks, { finalMode = "answer", delay = 360 } = {}) {
+  const streamId = ++state.streamId;
+  const host = document.querySelector("#stream-host");
+  const typing = document.querySelector(".typing-indicator");
+  if (!host) return;
+
+  for (const block of blocks) {
+    if (streamId !== state.streamId) return;
+    await wait(delay);
+    const wrapper = document.createElement("div");
+    wrapper.className = "stream-chunk answer fade-in";
+    wrapper.innerHTML = block;
+    host.appendChild(wrapper);
+    scrollConversation();
+  }
+
+  if (streamId !== state.streamId) return;
+  if (typing) typing.remove();
+  await wait(120);
+  renderChat(finalMode);
+}
+
 function inputConfig(mode) {
   if (mode === "generating") {
     return { value: "这些趋势对中国品牌出海有什么启示？", active: true, stop: true };
@@ -286,21 +373,25 @@ function longReport() {
     <article class="answer fade-in">
       <h1>东南亚市场进入分析报告</h1>
       <p>综合政策、平台生态与物流基建来看，2026 年东南亚仍是中国品牌出海的重要增量市场，但进入策略需要从“铺渠道”转向“本地化经营”。</p>
-      <h2>一、优先机会</h2>
+      <h2>一、结论摘要</h2>
+      <p>建议采用“新加坡做合规样板、印尼做规模增长、越南做成本效率”的三阶段进入策略。短期优先选择内容转化快、履约复杂度可控的美妆个护、时尚配饰与轻智能硬件。</p>
+      <h2>二、优先机会</h2>
       <ul>
-        <li><strong>美妆个护：</strong>内容种草效率高，但需关注成分备案、清真认证与广告合规。</li>
-        <li><strong>时尚配饰：</strong>价格带弹性较大，适合通过 TikTok Shop 与 Shopee 做快速测试。</li>
-        <li><strong>智能小家电：</strong>客单价较高，需提前准备安全认证、售后网点与本地仓配。</li>
+        <li><strong>美妆个护：</strong>内容种草效率高，达人合作与短视频平台能快速验证需求，但需关注成分备案、清真认证与广告合规。</li>
+        <li><strong>时尚配饰：</strong>价格带弹性较大，适合通过 TikTok Shop 与 Shopee 做快速测试，重点控制退换货与尺码体验。</li>
+        <li><strong>智能小家电：</strong>客单价较高，适合建立品牌心智，但需提前准备安全认证、售后网点与本地仓配。</li>
       </ul>
-      <h2>二、市场对比</h2>
+      <h2>三、市场对比</h2>
       ${marketTable()}
       <div class="blockquote">注意：以上政策要点以当地官方最新公告为准，实施细则可能按季度调整，申报前请再次核对生效日期。</div>
-      <h2>三、进入建议</h2>
+      <h2>四、进入路径</h2>
       <ol>
-        <li>先用新加坡做合规样板与英文内容资产沉淀。</li>
-        <li>在印尼验证社媒内容、达人合作和本地支付转化。</li>
-        <li>越南适合作为中期增长市场，重点评估物流履约和售后成本。</li>
+        <li>第 1 阶段：用新加坡沉淀英文内容、政策合规清单与客服 SOP。</li>
+        <li>第 2 阶段：在印尼验证达人投放、直播转化、本地支付与仓配模型。</li>
+        <li>第 3 阶段：复制到越南，重点优化物流时效、售后成本和平台促销节奏。</li>
       </ol>
+      <h2>五、预算与团队建议</h2>
+      <p>冷启动预算建议集中在样品测款、达人内容、平台广告与客服履约。团队配置可先采用“国内品牌负责人 + 本地运营顾问 + 第三方仓配客服”的轻量结构，待单量稳定后再补本地全职岗位。</p>
       <div class="answer-divider"></div>
       ${sourceTags()}
     </article>
@@ -392,10 +483,21 @@ function scrollConversation() {
 
 async function runQuestion(text) {
   state.screen = "generating";
-  renderGenerating(text);
-  await wait(1250);
+  renderStreamingShell({ question: text });
+  await streamBlocks(answerShortBlocks(), { finalMode: "answer", delay: 430 });
   state.screen = "answer";
-  renderChat("answer");
+}
+
+async function runReportStream() {
+  state.screen = "report-generating";
+  state.sourceOpen = false;
+  renderStreamingShell({
+    title: "东南亚出海分析",
+    question: "帮我生成一份东南亚市场进入分析报告",
+    input: "继续追问…",
+  });
+  await streamBlocks(longReportBlocks(), { finalMode: "report", delay: 380 });
+  state.screen = "report";
 }
 
 function renderGenerating(text = "2026 年欧美时尚消费市场的核心趋势有哪些？") {
@@ -461,21 +563,17 @@ function bindEvents() {
       }
     }
     if (name === "report" || name === "compare") {
-      state.sourceOpen = false;
-      renderChat("report");
+      await runReportStream();
     }
     if (name === "send") {
-      renderChat("generating");
-      await wait(1150);
-      renderChat("report");
+      await runReportStream();
     }
     if (name === "stop") {
+      state.streamId += 1;
       renderChat("stopped");
     }
     if (name === "retry" || name === "regen") {
-      renderChat("generating");
-      await wait(900);
-      renderChat("answer");
+      await runQuestion("2026 年欧美时尚消费市场的核心趋势有哪些？");
     }
     if (name === "reload") {
       renderLoading(false);
