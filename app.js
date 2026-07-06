@@ -15,11 +15,8 @@ const sources = [
   "Google SEA e-Conomy Report",
 ];
 
-const urlVersion = new URLSearchParams(window.location.search).get("version");
-
 const state = {
   screen: "loading",
-  version: urlVersion === "A" ? "A" : "B",
   currentView: { type: "loading", failed: false },
   hasUserInteracted: false,
   sourceOpen: false,
@@ -29,40 +26,7 @@ const state = {
   streamId: 0,
 };
 
-const versions = {
-  A: {
-    title: "版本 A · 渐变卡片 H5 演示",
-    homeGreeting: "你好，我是你的时尚出海智能顾问",
-    homeSubcopy: "市场洞察 · 政策解读 · 品牌全球化，尽管问我",
-  },
-  B: {
-    title: "版本 B · 极简白 H5 演示",
-    homeGreeting: "嗨，今天想聊点什么？",
-    homeSubcopy: "市场洞察 · 政策解读 · 品牌全球化",
-  },
-};
-
 const wait = (ms) => new Promise((resolve) => window.setTimeout(resolve, ms));
-
-function isVersionA() {
-  return state.version === "A";
-}
-
-function syncVersionUi() {
-  document.body.dataset.version = state.version;
-  document.querySelectorAll("[data-version]").forEach((button) => {
-    button.classList.toggle("is-active", button.dataset.version === state.version);
-  });
-  const copy = document.querySelector("#panel-version-copy");
-  if (copy) copy.textContent = versions[state.version].title;
-  document.title = `AI 出海助手 · 版本 ${state.version} Demo`;
-}
-
-function updateVersionUrl() {
-  const url = new URL(window.location.href);
-  url.searchParams.set("version", state.version);
-  window.history.replaceState({}, "", url);
-}
 
 function renderCurrentView() {
   const view = state.currentView || { type: "home" };
@@ -171,7 +135,6 @@ function typingIndicator() {
 
 function renderHome() {
   state.currentView = { type: "home" };
-  const version = versions[state.version];
   app.innerHTML = `
     <section class="screen">
       ${statusBar()}
@@ -179,8 +142,8 @@ function renderHome() {
       <main class="home-main">
         <section class="hero fade-in">
           ${lightOrb()}
-          <h2>${version.homeGreeting}</h2>
-          <p>${version.homeSubcopy}</p>
+          <h2>嗨，今天想聊点什么？</h2>
+          <p>市场洞察 · 政策解读 · 品牌全球化</p>
         </section>
         ${homeSuggestions()}
       </main>
@@ -190,23 +153,6 @@ function renderHome() {
 }
 
 function homeSuggestions() {
-  const questions = [
-    ["2026 年欧美时尚消费市场有哪些核心趋势？", "2026 年欧美时尚消费市场的核心趋势有哪些？"],
-    ["美妆品牌出海东南亚，机会与风险怎么看？", "美妆品牌出海东南亚的机会与风险"],
-    ["解读最新的跨境电商出海扶持政策", "解读最新跨境电商出海扶持政策"],
-  ];
-  if (isVersionA()) {
-    return `
-      <section class="suggestions suggestions-a fade-in">
-        <p class="suggestions-title">试试这样问</p>
-        ${questions.map(([label, question]) => `
-          <button type="button" class="suggestion-card" data-question="${escapeHtml(question)}">
-            <span>${escapeHtml(label)}</span><span class="chevron is-card" aria-hidden="true"></span>
-          </button>
-        `).join("")}
-      </section>
-    `;
-  }
   return `
     <section class="suggestions fade-in">
       <button type="button" class="suggestion-chip" data-question="2026 年欧美时尚消费市场的核心趋势有哪些？">2026 年欧美时尚消费市场核心趋势？</button>
@@ -255,7 +201,7 @@ function searchStatus() {
 
 function answerShort() {
   return `
-    <article class="answer ${isVersionA() ? "answer-card" : ""} fade-in">
+    <article class="answer fade-in">
       <p>2026 年欧美时尚消费市场呈现以下三个核心趋势：</p>
       <section class="section">
         <h3 class="section-title">1. 可持续时尚持续升温</h3>
@@ -432,7 +378,7 @@ async function streamBlocks(blocks, { finalMode = "answer", delay = 240, charDel
     if (streamId !== state.streamId) return;
     await wait(delay);
     const wrapper = document.createElement("div");
-    wrapper.className = `stream-chunk answer fade-in${isVersionA() && !block.includes("sources-panel") ? " answer-card" : ""}`;
+    wrapper.className = "stream-chunk answer fade-in";
     host.appendChild(wrapper);
 
     if (block.includes("sources-panel")) {
@@ -515,7 +461,7 @@ function inputConfig(mode) {
 
 function longReport() {
   return `
-    <article class="answer ${isVersionA() ? "answer-card" : ""} fade-in">
+    <article class="answer fade-in">
       <h1>东南亚市场进入分析报告</h1>
       <p>综合政策、平台生态与物流基建来看，2026 年东南亚仍是中国品牌出海的重要增量市场，但进入策略需要从“铺渠道”转向“本地化经营”。</p>
       <h2>一、结论摘要</h2>
@@ -545,7 +491,7 @@ function longReport() {
 
 function markdownShowcase() {
   return `
-    <article class="answer ${isVersionA() ? "answer-card" : ""} fade-in">
+    <article class="answer fade-in">
       <h1>Markdown 渲染规范</h1>
       <h2>政策解读样例</h2>
       <p>新加坡跨境电商准入通常涉及企业注册、税务登记、品类许可与平台合规。重点关注 <a href="#">Enterprise Singapore</a> 与海关公告<span class="citation">1</span>。</p>
@@ -597,7 +543,7 @@ function marketTable() {
 
 function errorBlock() {
   return `
-    <div class="state-block ${isVersionA() ? "state-card" : ""} fade-in">
+    <div class="state-block fade-in">
       <div class="state-line"><span class="state-icon">!</span><span>回复生成失败，请检查网络后重试</span></div>
       <button type="button" class="retry-chip" data-action="retry">↻ 重试</button>
     </div>
@@ -606,7 +552,7 @@ function errorBlock() {
 
 function queueBlock() {
   return `
-    <div class="state-block ${isVersionA() ? "state-card" : ""} fade-in">
+    <div class="state-block fade-in">
       <div class="state-line"><span class="state-icon neutral">⏱</span><span>当前咨询人数较多，请稍候再试</span></div>
       <button type="button" class="retry-chip" data-action="retry">↻ 重试</button>
     </div>
@@ -615,7 +561,7 @@ function queueBlock() {
 
 function stoppedAnswer() {
   return `
-    <article class="answer ${isVersionA() ? "answer-card" : ""} fade-in">
+    <article class="answer fade-in">
       <p>对中国品牌而言，欧美时尚消费趋势的启示主要集中在可持续供应链、AI 辅助设计、内容社区运营与小众品牌定位。建议优先从材料透明度、</p>
       <div class="stopped-row">
         <span>已停止生成</span>
@@ -698,16 +644,6 @@ function bindEvents() {
   document.addEventListener("click", async (event) => {
     state.hasUserInteracted = true;
 
-    const versionButton = event.target.closest("[data-version]");
-    if (versionButton) {
-      state.version = versionButton.dataset.version;
-      state.streamId += 1;
-      syncVersionUi();
-      updateVersionUrl();
-      renderCurrentView();
-      return;
-    }
-
     const question = event.target.closest("[data-question]");
     if (question) {
       await runQuestion(question.dataset.question);
@@ -776,7 +712,6 @@ function bindEvents() {
 
 async function boot() {
   bindEvents();
-  syncVersionUi();
   renderLoading(false);
   await wait(1200);
   if (!state.hasUserInteracted && state.currentView.type === "loading" && !state.currentView.failed) {
