@@ -706,6 +706,21 @@ body[data-version="A"] .typing-indicator {
   box-shadow: 0 2px 10px rgba(15, 23, 42, 0.05);
 }
 
+body[data-version="A"] .answer-card h1,
+body[data-version="A"] .answer-card h2,
+body[data-version="A"] .answer-card h3 {
+  color: var(--text);
+}
+
+body[data-version="A"] .answer-card .table-frame {
+  border-radius: 12px;
+}
+
+body[data-version="A"] .answer-card .code-frame,
+body[data-version="A"] .answer-card .blockquote {
+  background: #f4f8fc;
+}
+
 .stream-chunk.answer-card {
   margin-bottom: 0;
 }
@@ -1057,6 +1072,15 @@ body[data-version="A"] .sources-panel {
   align-items: flex-start;
 }
 
+.state-card {
+  width: 100%;
+  min-height: 93px;
+  padding: 14px 16px;
+  border-radius: 6px 16px 16px 16px;
+  background: #fff;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.05);
+}
+
 .state-line {
   display: flex;
   align-items: center;
@@ -1087,6 +1111,10 @@ body[data-version="A"] .sources-panel {
   color: var(--muted);
   font-size: 12px;
   line-height: 17px;
+}
+
+body[data-version="A"] .stopped-row {
+  margin-top: 12px;
 }
 
 .bottom-area {

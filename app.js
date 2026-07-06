@@ -579,7 +579,7 @@ function marketTable() {
 
 function errorBlock() {
   return `
-    <div class="state-block fade-in">
+    <div class="state-block ${isVersionA() ? "state-card" : ""} fade-in">
       <div class="state-line"><span class="state-icon">!</span><span>回复生成失败，请检查网络后重试</span></div>
       <button type="button" class="retry-chip" data-action="retry">↻ 重试</button>
     </div>
@@ -588,7 +588,7 @@ function errorBlock() {
 
 function queueBlock() {
   return `
-    <div class="state-block fade-in">
+    <div class="state-block ${isVersionA() ? "state-card" : ""} fade-in">
       <div class="state-line"><span class="state-icon neutral">⏱</span><span>当前咨询人数较多，请稍候再试</span></div>
       <button type="button" class="retry-chip" data-action="retry">↻ 重试</button>
     </div>
@@ -597,7 +597,7 @@ function queueBlock() {
 
 function stoppedAnswer() {
   return `
-    <article class="answer fade-in">
+    <article class="answer ${isVersionA() ? "answer-card" : ""} fade-in">
       <p>对中国品牌而言，欧美时尚消费趋势的启示主要集中在可持续供应链、AI 辅助设计、内容社区运营与小众品牌定位。建议优先从材料透明度、</p>
       <div class="stopped-row">
         <span>已停止生成</span>
