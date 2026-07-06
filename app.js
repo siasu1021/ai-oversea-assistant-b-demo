@@ -21,6 +21,7 @@ const state = {
   screen: "loading",
   version: urlVersion === "A" ? "A" : "B",
   currentView: { type: "loading", failed: false },
+  hasUserInteracted: false,
   sourceOpen: false,
   input: "",
   inputMode: "single",
@@ -695,6 +696,8 @@ function escapeHtml(value) {
 
 function bindEvents() {
   document.addEventListener("click", async (event) => {
+    state.hasUserInteracted = true;
+
     const versionButton = event.target.closest("[data-version]");
     if (versionButton) {
       state.version = versionButton.dataset.version;
@@ -776,7 +779,9 @@ async function boot() {
   syncVersionUi();
   renderLoading(false);
   await wait(1200);
-  renderHome();
+  if (!state.hasUserInteracted && state.currentView.type === "loading" && !state.currentView.failed) {
+    renderHome();
+  }
 }
 
 boot();
