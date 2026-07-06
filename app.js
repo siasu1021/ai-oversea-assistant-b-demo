@@ -20,6 +20,7 @@ const urlVersion = new URLSearchParams(window.location.search).get("version");
 const state = {
   screen: "loading",
   version: urlVersion === "A" ? "A" : "B",
+  currentView: { type: "loading", failed: false },
   sourceOpen: false,
   input: "",
   inputMode: "single",
@@ -60,6 +61,19 @@ function updateVersionUrl() {
   const url = new URL(window.location.href);
   url.searchParams.set("version", state.version);
   window.history.replaceState({}, "", url);
+}
+
+function renderCurrentView() {
+  const view = state.currentView || { type: "home" };
+  if (view.type === "chat") {
+    renderChat(view.mode);
+    return;
+  }
+  if (view.type === "loading") {
+    renderLoading(view.failed);
+    return;
+  }
+  renderHome();
 }
 
 function statusBar() {
@@ -155,6 +169,7 @@ function typingIndicator() {
 }
 
 function renderHome() {
+  state.currentView = { type: "home" };
   const version = versions[state.version];
   app.innerHTML = `
     <section class="screen">
@@ -201,6 +216,7 @@ function homeSuggestions() {
 }
 
 function renderLoading(failed = false) {
+  state.currentView = { type: "loading", failed };
   app.innerHTML = `
     <section class="screen">
       ${statusBar()}
@@ -350,6 +366,7 @@ function followUps() {
 }
 
 function renderChat(mode = "answer") {
+  state.currentView = { type: "chat", mode };
   const generating = mode === "generating";
   const report = mode === "report";
   const failed = mode === "failed";
@@ -632,6 +649,7 @@ function scrollConversation(position = "bottom") {
 
 async function runQuestion(text) {
   state.screen = "generating";
+  state.currentView = { type: "chat", mode: "answer" };
   renderStreamingShell({ question: text });
   await streamBlocks(answerShortBlocks(), { finalMode: "answer", delay: 165, charDelay: 20 });
   state.screen = "answer";
@@ -640,6 +658,7 @@ async function runQuestion(text) {
 async function runReportStream() {
   state.screen = "report-generating";
   state.sourceOpen = false;
+  state.currentView = { type: "chat", mode: "report" };
   renderStreamingShell({
     title: "东南亚出海分析",
     question: "帮我生成一份东南亚市场进入分析报告",
@@ -679,11 +698,10 @@ function bindEvents() {
     const versionButton = event.target.closest("[data-version]");
     if (versionButton) {
       state.version = versionButton.dataset.version;
-      state.sourceOpen = false;
       state.streamId += 1;
       syncVersionUi();
       updateVersionUrl();
-      renderHome();
+      renderCurrentView();
       return;
     }
 
