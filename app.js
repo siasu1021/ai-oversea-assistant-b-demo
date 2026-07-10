@@ -15,6 +15,55 @@ const sources = [
   "Google SEA e-Conomy Report",
 ];
 
+const defaultConversation = {
+  title: "欧美时尚市场趋势",
+  question: "2026 年欧美时尚消费市场的核心趋势有哪些？",
+};
+
+const historyGroups = [
+  {
+    month: "2026年7月",
+    items: [
+      "欧美时尚市场趋势",
+      "美妆品牌出海东南亚的机会与风险",
+      "最新跨境电商出海扶持政策",
+      "欧美时尚市场趋势",
+      "美妆品牌出海东南亚的机会与风险",
+      "最新跨境电商出海扶持政策",
+    ],
+  },
+  {
+    month: "2026年6月",
+    items: [
+      "美妆品牌出海东南亚的机会与风险",
+      "欧美时尚市场趋势",
+      "最新跨境电商出海扶持政策",
+      "美妆品牌出海东南亚的机会与风险",
+      "最新跨境电商出海扶持政策",
+      "美妆品牌出海东南亚的机会与风险",
+      "最新跨境电商出海扶持政策",
+      "欧美时尚市场趋势",
+    ],
+  },
+  {
+    month: "2026年5月",
+    items: [
+      "欧美时尚市场趋势",
+      "美妆品牌出海东南亚的机会与风险",
+      "最新跨境电商出海扶持政策",
+      "欧美时尚市场趋势",
+      "美妆品牌出海东南亚的机会与风险",
+      "最新跨境电商出海扶持政策",
+    ],
+  },
+];
+
+const historyQuestions = {
+  "欧美时尚市场趋势": defaultConversation.question,
+  "美妆品牌出海东南亚的机会与风险": "美妆品牌出海东南亚的机会与风险有哪些？",
+  "最新跨境电商出海扶持政策": "请解读最新跨境电商出海扶持政策。",
+};
+
 const state = {
   screen: "loading",
   currentView: { type: "loading", failed: false },
@@ -24,6 +73,8 @@ const state = {
   inputMode: "single",
   generated: false,
   streamId: 0,
+  historyOpen: false,
+  activeConversation: { ...defaultConversation },
 };
 
 const wait = (ms) => new Promise((resolve) => window.setTimeout(resolve, ms));
@@ -41,32 +92,99 @@ function renderCurrentView() {
   renderHome();
 }
 
-function statusBar() {
+function wechatTopChrome() {
   return `
-    <div class="status-bar">
-      <div>9:41</div>
-      <div class="status-icons" aria-hidden="true">
-        <span class="signal"><i></i><i></i><i></i><i></i></span>
-        <span class="wifi"><i></i></span>
-        <span class="battery"></span>
-      </div>
+    <div class="wechat-chrome wechat-top-chrome" aria-hidden="true">
+      <img src="assets/wechat-h5-chrome.png" alt="" />
     </div>
   `;
 }
 
-function homeHeader() {
-  return `<header class="home-header">AI 出海助手</header>`;
+function wechatBottomChrome() {
+  return `
+    <div class="wechat-chrome wechat-bottom-chrome" aria-hidden="true">
+      <img src="assets/wechat-h5-chrome.png" alt="" />
+    </div>
+  `;
 }
 
-function chatHeader(title = "欧美时尚市场趋势") {
+function appHeader(title = "") {
   return `
-    <header class="chat-header">
-      <div>
-        <strong>${title}</strong>
-        <span>AI 出海助手 · 企业版</span>
-      </div>
+    <header class="app-header ${title ? "app-header-titled" : ""}">
+      <button type="button" class="header-action" data-action="open-history" aria-label="打开历史对话">
+        <img src="assets/history.svg" alt="" />
+      </button>
+      ${title ? `<strong class="app-header-title">${escapeHtml(title)}</strong>` : `<span class="app-header-title" aria-hidden="true"></span>`}
+      <button type="button" class="header-action" data-action="new-chat" aria-label="新建对话">
+        <img src="assets/new-chat.svg" alt="" />
+      </button>
     </header>
   `;
+}
+
+function homeHeader() {
+  return appHeader();
+}
+
+function chatHeader(title = defaultConversation.title) {
+  return appHeader(title);
+}
+
+function historySidebar() {
+  const groups = historyGroups.map((group) => `
+    <section class="history-group" aria-label="${group.month}">
+      <div class="history-month">${group.month}</div>
+      <div class="history-list">
+        ${group.items.map((title) => `
+          <button type="button" class="history-item" data-action="select-history" data-history-title="${escapeHtml(title)}">
+            ${escapeHtml(title)}
+          </button>
+        `).join("")}
+      </div>
+    </section>
+  `).join("");
+
+  return `
+    <div class="history-layer" data-history-layer>
+      <button type="button" class="history-backdrop" data-action="close-history" aria-label="关闭历史对话"></button>
+      <aside class="history-drawer" role="dialog" aria-modal="true" aria-labelledby="history-title" tabindex="-1">
+        <header class="history-drawer-header">
+          <h2 id="history-title">历史记录</h2>
+          <button type="button" class="history-close" data-action="close-history" aria-label="关闭历史对话">
+            <img src="assets/close.svg" alt="" />
+          </button>
+        </header>
+        <div class="history-content">${groups}</div>
+      </aside>
+    </div>
+  `;
+}
+
+function openHistory() {
+  if (state.historyOpen) return;
+  const screen = app.querySelector(".screen");
+  if (!screen) return;
+  state.historyOpen = true;
+  screen.insertAdjacentHTML("beforeend", historySidebar());
+  screen.classList.add("history-open");
+  screen.querySelector(".history-drawer")?.focus();
+}
+
+function closeHistory({ restoreFocus = false } = {}) {
+  const screen = app.querySelector(".screen");
+  screen?.querySelector("[data-history-layer]")?.remove();
+  screen?.classList.remove("history-open");
+  state.historyOpen = false;
+  if (restoreFocus) screen?.querySelector('[data-action="open-history"]')?.focus();
+}
+
+function resetConversation() {
+  state.streamId += 1;
+  state.sourceOpen = false;
+  state.input = "";
+  state.activeConversation = { ...defaultConversation };
+  closeHistory();
+  renderHome();
 }
 
 function bottomArea({ value = "", placeholder = "继续追问…", active = false, stop = false, multiline = false, counter = false } = {}) {
@@ -86,6 +204,7 @@ function bottomArea({ value = "", placeholder = "继续追问…", active = fals
       </div>
       <div class="disclaimer">内容由 AI 生成，仅供参考</div>
       <div class="home-indicator"></div>
+      ${wechatBottomChrome()}
     </div>
   `;
 }
@@ -100,7 +219,7 @@ function sendIcon() {
 }
 
 function homeIndicatorOnly() {
-  return `<div class="home-indicator"></div>`;
+  return `<div class="home-indicator"></div>${wechatBottomChrome()}`;
 }
 
 function lightOrb() {
@@ -134,10 +253,11 @@ function typingIndicator() {
 }
 
 function renderHome() {
+  state.historyOpen = false;
   state.currentView = { type: "home" };
   app.innerHTML = `
     <section class="screen">
-      ${statusBar()}
+      ${wechatTopChrome()}
       ${homeHeader()}
       <main class="home-main">
         <section class="hero fade-in">
@@ -163,10 +283,11 @@ function homeSuggestions() {
 }
 
 function renderLoading(failed = false) {
+  state.historyOpen = false;
   state.currentView = { type: "loading", failed };
   app.innerHTML = `
     <section class="screen">
-      ${statusBar()}
+      ${wechatTopChrome()}
       <main class="init-state">
         ${stateOrb(failed)}
         ${failed ? `<p>页面加载失败，请检查网络后重试</p><button type="button" class="primary-button" data-action="reload">重新加载</button>` : `${loadingDots()}<p>正在加载 AI 出海助手...</p>`}
@@ -313,6 +434,7 @@ function followUps() {
 }
 
 function renderChat(mode = "answer") {
+  state.historyOpen = false;
   state.currentView = { type: "chat", mode };
   const generating = mode === "generating";
   const report = mode === "report";
@@ -324,14 +446,19 @@ function renderChat(mode = "answer") {
   const multiline = mode === "multiline";
   const markdown = mode === "markdown";
   const stateOnly = failed || queue || stopped || sending || sendFailed;
+  const isReportView = report || markdown || multiline;
+  const title = isReportView ? "东南亚出海分析" : state.activeConversation.title;
+  const question = isReportView
+    ? "帮我生成一份东南亚市场进入分析报告"
+    : state.activeConversation.question;
 
   app.innerHTML = `
     <section class="screen">
-      ${statusBar()}
-      ${chatHeader(report || markdown || multiline ? "东南亚出海分析" : "欧美时尚市场趋势")}
+      ${wechatTopChrome()}
+      ${chatHeader(title)}
       <main class="conversation" id="conversation">
         <div class="timestamp">14:30</div>
-        ${userMessage(report || markdown || multiline ? "帮我生成一份东南亚市场进入分析报告" : "2026 年欧美时尚消费市场的核心趋势有哪些？", { sending, failed: sendFailed })}
+        ${userMessage(question, { sending, failed: sendFailed })}
         ${!sending && !sendFailed ? searchStatus() : ""}
         ${mode === "sources" ? sourcesPanel(true) : ""}
         ${mode === "answer" ? answerShort() : ""}
@@ -351,9 +478,10 @@ function renderChat(mode = "answer") {
 }
 
 function renderStreamingShell({ title = "欧美时尚市场趋势", question = "2026 年欧美时尚消费市场的核心趋势有哪些？", input = "这些趋势对中国品牌出海有什么启示？" } = {}) {
+  state.historyOpen = false;
   app.innerHTML = `
     <section class="screen">
-      ${statusBar()}
+      ${wechatTopChrome()}
       ${chatHeader(title)}
       <main class="conversation" id="conversation">
         <div class="timestamp">14:30</div>
@@ -595,6 +723,12 @@ function scrollConversation(position = "bottom") {
 }
 
 async function runQuestion(text) {
+  const title = text.includes("美妆品牌")
+    ? "美妆品牌出海东南亚的机会与风险"
+    : text.includes("跨境电商")
+      ? "最新跨境电商出海扶持政策"
+      : defaultConversation.title;
+  state.activeConversation = { title, question: text };
   state.screen = "generating";
   state.currentView = { type: "chat", mode: "answer" };
   renderStreamingShell({ question: text });
@@ -616,10 +750,11 @@ async function runReportStream() {
 }
 
 function renderGenerating(text = "2026 年欧美时尚消费市场的核心趋势有哪些？") {
+  state.historyOpen = false;
   app.innerHTML = `
     <section class="screen">
-      ${statusBar()}
-      ${chatHeader()}
+      ${wechatTopChrome()}
+      ${chatHeader(state.activeConversation.title)}
       <main class="conversation" id="conversation">
         <div class="timestamp">14:30</div>
         ${userMessage(text)}
@@ -671,6 +806,31 @@ function bindEvents() {
     if (!action) return;
     const name = action.dataset.action;
 
+    if (name === "open-history") {
+      openHistory();
+      return;
+    }
+    if (name === "close-history") {
+      closeHistory({ restoreFocus: true });
+      return;
+    }
+    if (name === "new-chat") {
+      resetConversation();
+      return;
+    }
+    if (name === "select-history") {
+      const title = action.dataset.historyTitle || defaultConversation.title;
+      state.streamId += 1;
+      state.sourceOpen = false;
+      state.activeConversation = {
+        title,
+        question: historyQuestions[title] || title,
+      };
+      closeHistory();
+      renderChat("answer");
+      return;
+    }
+
     if (name === "toggle-sources") {
       const isReport = Boolean(document.querySelector(".answer h1"));
       state.sourceOpen = !state.sourceOpen;
@@ -707,6 +867,11 @@ function bindEvents() {
     const button = pill.querySelector(".send-button");
     const hasValue = textarea.value.trim().length > 0;
     button.classList.toggle("disabled", !hasValue);
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape" || !state.historyOpen) return;
+    closeHistory({ restoreFocus: true });
   });
 }
 
